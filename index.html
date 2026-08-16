@@ -3,139 +3,95 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="ShortcutHub: a massive, searchable keyboard shortcut catalog covering thousands of software titles and verified shortcut packs." />
-  <meta name="theme-color" content="#090d18" />
-  <title>ShortcutHub — The Massive Keyboard Shortcut Library</title>
+  <meta name="description" content="ShortcutHub V2 — a massive, searchable keyboard shortcut encyclopedia with essential-first cards and full software shortcut packs." />
+  <meta name="theme-color" content="#080b12" />
+  <title>ShortcutHub V2 — Keyboard Shortcut Encyclopedia</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="ambient ambient-one" aria-hidden="true"></div>
-  <div class="ambient ambient-two" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="ShortcutHub home">
-      <span class="brand-mark"><kbd>⌘</kbd></span>
-      <span>Shortcut<span>Hub</span></span>
-    </a>
-
-    <nav class="header-actions" aria-label="Site controls">
-      <button class="icon-button" id="favoritesToggle" type="button" aria-pressed="false" title="Show favorites">
-        <span aria-hidden="true">★</span>
-        <span class="desktop-label">Favorites</span>
-      </button>
-      <button class="icon-button" id="themeToggle" type="button" title="Toggle theme" aria-label="Toggle light and dark theme">
-        <span id="themeIcon" aria-hidden="true">☀</span>
-      </button>
+  <div class="aurora a1"></div><div class="aurora a2"></div>
+  <header class="topbar">
+    <a class="brand" href="#top"><span class="brand-key">⌘</span><span>Shortcut<span>Hub</span></span><b>V2</b></a>
+    <nav class="top-actions">
+      <button id="surpriseTop" class="surprise-btn mini"><span>✦</span> Surprise me</button>
+      <button id="favoritesToggle" class="round-btn" aria-pressed="false" title="Favorites">★</button>
+      <button id="themeToggle" class="round-btn" title="Theme"><span id="themeIcon">☀</span></button>
     </nav>
   </header>
 
   <main id="top">
-    <section class="hero">
-      <div class="eyebrow">THE GLOBAL SHORTCUT ENCYCLOPEDIA</div>
-      <h1>Find the shortcut.<br><span>For almost anything.</span></h1>
-      <p class="hero-copy">
-        A huge software catalog spanning creative work, architecture, game development, engineering,
-        coding, research, business, media and more — with verified shortcut packs added without publishing guessed defaults.
-      </p>
-
-      <div class="search-shell">
-        <span class="search-icon" aria-hidden="true">⌕</span>
-        <label class="sr-only" for="searchInput">Search software and shortcuts</label>
-        <input id="searchInput" type="search" autocomplete="off"
-          placeholder="Search CapCut, AutoCAD, Blender, VS Code, split clip, command palette…" />
-        <kbd class="search-hint">/</kbd>
-      </div>
-
-      <div class="hero-meta">
-        <div class="stats" aria-label="Library statistics">
-          <span><strong id="softwareStat">0</strong> software</span>
-          <span class="dot">•</span>
-          <span><strong id="shortcutStat">0</strong> shortcuts</span>
-          <span class="dot">•</span>
-          <span><strong id="verifiedStat">0</strong> verified packs</span>
-          <span class="dot">•</span>
-          <span><strong id="categoryStat">0</strong> genres</span>
-        </div>
-        <button class="text-button" id="randomButton" type="button">Surprise me <span aria-hidden="true">↗</span></button>
-      </div>
-    </section>
-
-    <section class="filter-panel" aria-label="Shortcut filters">
-      <div class="filter-row">
-        <div class="filter-block">
-          <span class="filter-label">Platform</span>
-          <div class="platform-switch" role="group" aria-label="Platform">
-            <button class="platform-button active" data-platform="windows" type="button">⊞ Windows</button>
-            <button class="platform-button" data-platform="mac" type="button">⌘ macOS</button>
+    <section class="hero-v2">
+      <div class="hero-copy-wrap">
+        <div class="eyebrow"><span></span> THE KEYBOARD SHORTCUT ENCYCLOPEDIA</div>
+        <h1>Know the keys.<br><em>Own the workflow.</em></h1>
+        <p>Essential shortcuts up front. Complete verified packs one click away. Thousands of software titles, organized for people who actually use them.</p>
+        <div class="hero-search-row">
+          <div class="search-box">
+            <span>⌕</span><input id="searchInput" type="search" autocomplete="off" placeholder="Search software or an action — Photoshop, trim, AutoCAD, duplicate…" />
+            <kbd>Ctrl K</kbd>
           </div>
+          <button id="surpriseHero" class="surprise-btn"><span class="spark">✦</span><span><small>FEEL LUCKY?</small>Surprise me</span><b>↗</b></button>
         </div>
-
-        <div class="filter-block">
-          <span class="filter-label">Coverage</span>
-          <div class="platform-switch status-switch" role="group" aria-label="Coverage status">
-            <button class="status-button active" data-status="all" type="button">All software</button>
-            <button class="status-button" data-status="verified" type="button">Verified packs</button>
-            <button class="status-button" data-status="catalog" type="button">Catalog only</button>
-          </div>
+        <div class="stats-row">
+          <div><strong id="softwareStat">0</strong><span>Software</span></div>
+          <div><strong id="shortcutStat">0</strong><span>Verified shortcuts</span></div>
+          <div><strong id="verifiedStat">0</strong><span>Shortcut packs</span></div>
+          <div><strong id="categoryStat">0</strong><span>Genres</span></div>
         </div>
       </div>
+      <aside class="hero-card">
+        <div class="hero-card-head"><span>SHORTCUT OF THE MOMENT</span><i>LIVE</i></div>
+        <div id="momentLogo" class="moment-logo">⌘</div>
+        <h2 id="momentApp">ShortcutHub</h2>
+        <p id="momentAction">Find anything instantly</p>
+        <div id="momentKeys" class="moment-keys"><kbd>Ctrl</kbd><span>+</span><kbd>K</kbd></div>
+        <button id="nextMoment">Another one <span>↻</span></button>
+      </aside>
+    </section>
 
-      <div class="select-grid">
-        <label class="select-field">
-          <span class="filter-label">Genre</span>
-          <select id="categorySelect" aria-label="Filter by genre"></select>
-        </label>
-        <label class="select-field">
-          <span class="filter-label">Profession / workflow</span>
-          <select id="professionSelect" aria-label="Filter by profession"></select>
-        </label>
+    <section class="sticky-filters">
+      <div class="platform-tabs">
+        <button class="platform-button active" data-platform="windows">⊞ Windows</button>
+        <button class="platform-button" data-platform="mac">⌘ macOS</button>
+      </div>
+      <select id="categorySelect" aria-label="Genre"></select>
+      <select id="professionSelect" aria-label="Profession"></select>
+      <div class="coverage-tabs">
+        <button class="status-button active" data-status="all">All</button>
+        <button class="status-button" data-status="verified">With shortcuts</button>
+        <button class="status-button" data-status="catalog">Catalog</button>
       </div>
     </section>
 
-    <section class="coverage-note" aria-label="Database quality note">
-      <span class="verified-dot" aria-hidden="true"></span>
-      <p><strong>Verified pack</strong> means the app currently has shortcuts in this database. Catalog-only software is indexed for discovery, but ShortcutHub does not invent unverified keybindings.</p>
+    <section class="browse-head">
+      <div><span class="section-label">BROWSE LIBRARY</span><h2 id="resultsTitle">All software</h2></div>
+      <p id="resultCount"></p>
     </section>
 
-    <section class="results-head">
-      <div>
-        <p class="section-kicker">BROWSE</p>
-        <h2 id="resultsTitle">All software</h2>
-      </div>
-      <p id="resultCount" class="result-count" aria-live="polite"></p>
-    </section>
-
-    <section id="appGrid" class="app-grid" aria-live="polite"></section>
-
-    <div class="load-more-wrap" id="loadMoreWrap" hidden>
-      <button id="loadMoreButton" class="primary-button load-more-button" type="button">Load more software</button>
-    </div>
-
-    <section id="emptyState" class="empty-state" hidden>
-      <div class="empty-icon">⌨</div>
-      <h2>No matching software or shortcuts</h2>
-      <p>Try another search, genre, profession, platform, or coverage filter.</p>
-      <button id="resetButton" class="primary-button" type="button">Reset filters</button>
-    </section>
+    <section id="appGrid" class="app-grid"></section>
+    <div id="loadMoreWrap" class="load-wrap" hidden><button id="loadMoreButton" class="load-more">Load more</button></div>
+    <section id="emptyState" class="empty" hidden><div>⌨</div><h2>No match</h2><p>Try another software name, shortcut action, profession or genre.</p><button id="resetButton">Reset filters</button></section>
   </main>
 
-  <footer>
-    <div class="footer-brand">
-      <span class="mini-mark">⌘</span>
-      <div>
-        <strong>ShortcutHub</strong>
-        <p>A growing shortcut encyclopedia for faster digital work.</p>
+  <footer><div><strong>ShortcutHub V2</strong><span>Keyboard knowledge for every workflow.</span></div><p>Brand names and logos belong to their respective owners. Shortcut defaults can vary by version, layout and custom keybindings.</p><p class="credit">Made by <strong>K.I.Rohan</strong> ♥</p></footer>
+
+  <dialog id="detailDialog" class="detail-dialog">
+    <div class="dialog-shell">
+      <button id="dialogClose" class="dialog-close" aria-label="Close">×</button>
+      <header class="detail-head">
+        <div id="detailLogo" class="detail-logo"></div>
+        <div class="detail-title"><div class="detail-badges"><span id="detailCategory"></span><span id="detailCoverage"></span></div><h2 id="detailName"></h2><p id="detailDescription"></p></div>
+        <a id="detailSource" class="official-btn" target="_blank" rel="noreferrer noopener">Official complete reference ↗</a>
+      </header>
+      <div class="detail-toolbar">
+        <div class="detail-search"><span>⌕</span><input id="detailSearch" type="search" placeholder="Search inside this software…" /></div>
+        <div class="detail-count"><strong id="detailCount">0</strong> shortcuts in this pack</div>
       </div>
+      <div id="detailGroups" class="detail-groups"></div>
+      <div class="detail-note"><strong>About “all shortcuts”</strong><p>This panel shows every shortcut currently verified in ShortcutHub for this software. For apps with hundreds of commands or customizable bindings, use the official reference above for the vendor's complete live list.</p></div>
     </div>
-    <div class="footer-right">
-      <p>Shortcuts can vary by version, keyboard layout, operating system and custom keybindings. Brand names and logos belong to their respective owners and are used for identification.</p>
-      <p class="credit">Made by <strong>K.I.Rohan</strong> <span aria-hidden="true">♥</span></p>
-    </div>
-  </footer>
+  </dialog>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+  <div id="toast" class="toast"></div>
+  <script src="data.js"></script><script src="app.js"></script>
+</body></html>
