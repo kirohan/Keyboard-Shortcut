@@ -1,47 +1,81 @@
 (() => {
   const apps = window.SHORTCUT_APPS || [];
+  const PAGE_SIZE = 24;
+
   const el = {
-    appGrid: document.getElementById("appGrid"),
-    search: document.getElementById("searchInput"),
-    categories: document.getElementById("categoryFilters"),
-    favoritesToggle: document.getElementById("favoritesToggle"),
-    themeToggle: document.getElementById("themeToggle"),
-    themeIcon: document.getElementById("themeIcon"),
-    randomButton: document.getElementById("randomButton"),
-    resultCount: document.getElementById("resultCount"),
-    resultsTitle: document.getElementById("resultsTitle"),
-    emptyState: document.getElementById("emptyState"),
-    resetButton: document.getElementById("resetButton"),
-    toast: document.getElementById("toast"),
-    softwareStat: document.getElementById("softwareStat"),
-    shortcutStat: document.getElementById("shortcutStat")
+    appGrid: document.getElementById('appGrid'),
+    search: document.getElementById('searchInput'),
+    categorySelect: document.getElementById('categorySelect'),
+    professionSelect: document.getElementById('professionSelect'),
+    favoritesToggle: document.getElementById('favoritesToggle'),
+    themeToggle: document.getElementById('themeToggle'),
+    themeIcon: document.getElementById('themeIcon'),
+    randomButton: document.getElementById('randomButton'),
+    resultCount: document.getElementById('resultCount'),
+    resultsTitle: document.getElementById('resultsTitle'),
+    emptyState: document.getElementById('emptyState'),
+    resetButton: document.getElementById('resetButton'),
+    toast: document.getElementById('toast'),
+    softwareStat: document.getElementById('softwareStat'),
+    shortcutStat: document.getElementById('shortcutStat'),
+    verifiedStat: document.getElementById('verifiedStat'),
+    categoryStat: document.getElementById('categoryStat'),
+    loadMoreWrap: document.getElementById('loadMoreWrap'),
+    loadMoreButton: document.getElementById('loadMoreButton')
   };
 
-  const savedPlatform = localStorage.getItem("shortcutHubPlatform");
+  const savedPlatform = localStorage.getItem('shortcutHubPlatform');
   const state = {
-    platform: savedPlatform === "mac" ? "mac" : "windows",
-    category: "All",
-    query: "",
+    platform: savedPlatform === 'mac' ? 'mac' : 'windows',
+    category: 'All',
+    profession: 'All',
+    status: 'all',
+    query: '',
     favoritesOnly: false,
-    favorites: new Set(JSON.parse(localStorage.getItem("shortcutHubFavorites") || "[]"))
+    favorites: new Set(JSON.parse(localStorage.getItem('shortcutHubFavorites') || '[]')),
+    expandedApps: new Set(),
+    displayLimit: PAGE_SIZE
   };
 
-  const categories = ["All", ...new Set(apps.map(app => app.category))];
+  const categories = ['All', ...new Set(apps.map(app => app.category).filter(Boolean))]
+    .sort((a, b) => a === 'All' ? -1 : b === 'All' ? 1 : a.localeCompare(b));
+  const professions = ['All', ...new Set(apps.flatMap(app => app.professions || []))]
+    .sort((a, b) => a === 'All' ? -1 : b === 'All' ? 1 : a.localeCompare(b));
+
+  const logoAliases = {
+    windows: 'windows11', macos: 'macos', chrome: 'googlechrome', vscode: 'visualstudiocode',
+    photoshop: 'adobephotoshop', illustrator: 'adobeillustrator', indesign: 'adobeindesign',
+    'premiere-pro': 'adobepremierepro', 'after-effects': 'adobeaftereffects',
+    'davinci-resolve': 'davinciresolve', capcut: 'capcut', autocad: 'autocad',
+    'autodesk-revit': 'autodeskrevit', sketchup: 'sketchup', blender: 'blender',
+    maya: 'autodeskmaya', unreal: 'unrealengine', unity: 'unity', godot: 'godotengine',
+    figma: 'figma', canva: 'canva', github: 'github', slack: 'slack', discord: 'discord',
+    notion: 'notion', obs: 'obsstudio', 'power-bi': 'powerbi', tableau: 'tableau'
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
 
   function setTheme(theme) {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("shortcutHubTheme", theme);
-    el.themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+    localStorage.setItem('shortcutHubTheme', theme);
+    el.themeIcon.textContent = theme === 'dark' ? '☀' : '☾';
     document.querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", theme === "dark" ? "#090d18" : "#f4f6fb");
+      ?.setAttribute('content', theme === 'dark' ? '#090d18' : '#f4f6fb');
   }
 
-  const initialTheme = localStorage.getItem("shortcutHubTheme") ||
-    (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  const initialTheme = localStorage.getItem('shortcutHubTheme') ||
+    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
   setTheme(initialTheme);
 
   function appSupportsPlatform(app) {
-    return app.platform === "both" || app.platform === state.platform;
+    return app.platform === 'both' || app.platform === state.platform;
   }
 
   function shortcutId(appId, index) {
@@ -49,17 +83,13 @@
   }
 
   function getCombo(shortcut) {
-    return shortcut[state.platform] || "";
+    return shortcut[state.platform] || '';
   }
 
   function splitCombo(combo) {
-    if (combo.includes(" → ")) {
-      return { parts: combo.split(" → "), separator: "→" };
-    }
-    if (combo.includes(" + ")) {
-      return { parts: combo.split(" + "), separator: "+" };
-    }
-    return { parts: [combo], separator: "" };
+    if (combo.includes(' → ')) return { parts: combo.split(' → '), separator: '→' };
+    if (combo.includes(' + ')) return { parts: combo.split(' + '), separator: '+' };
+    return { parts: [combo], separator: '' };
   }
 
   function renderKeyCombo(combo) {
@@ -67,250 +97,391 @@
     return parts.map((key, index) => {
       const sep = index < parts.length - 1
         ? `<span class="key-separator" aria-hidden="true">${separator}</span>`
-        : "";
+        : '';
       return `<span class="keycap">${escapeHTML(key)}</span>${sep}`;
-    }).join("");
+    }).join('');
   }
 
-  function escapeHTML(value) {
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  function normalize(value) {
+    return String(value || '').toLowerCase().trim();
   }
 
-  function matchesQuery(app, shortcut) {
-    if (!state.query) return true;
-    const haystack = `${app.name} ${app.category} ${shortcut.action} ${getCombo(shortcut)}`.toLowerCase();
-    return haystack.includes(state.query.toLowerCase());
+  function appText(app) {
+    return normalize([
+      app.name,
+      app.category,
+      ...(app.professions || []),
+      app.description
+    ].join(' '));
   }
 
   function filteredApps() {
+    const q = normalize(state.query);
+
     return apps
       .filter(app => appSupportsPlatform(app))
-      .filter(app => state.category === "All" || app.category === state.category)
-      .map(app => ({
-        ...app,
-        visibleShortcuts: app.shortcuts
+      .filter(app => state.category === 'All' || app.category === state.category)
+      .filter(app => state.profession === 'All' || (app.professions || []).includes(state.profession))
+      .filter(app => state.status === 'all' ||
+        (state.status === 'verified' && (app.shortcuts || []).length > 0) ||
+        (state.status === 'catalog' && (app.shortcuts || []).length === 0))
+      .map(app => {
+        const appMatches = !q || appText(app).includes(q);
+        const visibleShortcuts = (app.shortcuts || [])
           .map((shortcut, index) => ({ ...shortcut, originalIndex: index }))
           .filter(shortcut => getCombo(shortcut))
-          .filter(shortcut => matchesQuery(app, shortcut))
-          .filter(shortcut => !state.favoritesOnly || state.favorites.has(shortcutId(app.id, shortcut.originalIndex)))
-      }))
-      .filter(app => app.visibleShortcuts.length > 0);
+          .filter(shortcut => {
+            if (!q) return true;
+            const text = normalize(`${shortcut.action} ${getCombo(shortcut)}`);
+            return text.includes(q) || appMatches;
+          })
+          .filter(shortcut => !state.favoritesOnly || state.favorites.has(shortcutId(app.id, shortcut.originalIndex)));
+
+        return { ...app, appMatches, visibleShortcuts };
+      })
+      .filter(app => {
+        if (state.favoritesOnly) return app.visibleShortcuts.length > 0;
+        if (!q) return true;
+        return app.appMatches || app.visibleShortcuts.some(shortcut => {
+          const text = normalize(`${shortcut.action} ${getCombo(shortcut)}`);
+          return text.includes(q);
+        });
+      });
   }
 
-  function renderCategories() {
-    el.categories.innerHTML = categories.map(category => `
-      <button type="button"
-        class="category-button ${state.category === category ? "active" : ""}"
-        data-category="${escapeHTML(category)}">
-        ${escapeHTML(category)}
-      </button>
-    `).join("");
+  function populateSelect(select, values, label) {
+    select.innerHTML = values.map(value =>
+      `<option value="${escapeHTML(value)}">${value === 'All' ? `All ${label}` : escapeHTML(value)}</option>`
+    ).join('');
   }
 
-  function render() {
-    const visibleApps = filteredApps();
-    const visibleShortcuts = visibleApps.reduce((sum, app) => sum + app.visibleShortcuts.length, 0);
+  function renderFilters() {
+    populateSelect(el.categorySelect, categories, 'genres');
+    populateSelect(el.professionSelect, professions, 'professions');
+    el.categorySelect.value = state.category;
+    el.professionSelect.value = state.profession;
 
-    el.resultsTitle.textContent = state.favoritesOnly
-      ? "Your favorites"
-      : state.query
-        ? `Results for “${state.query}”`
-        : state.category === "All" ? "Popular shortcuts" : state.category;
+    document.querySelectorAll('.platform-button').forEach(button => {
+      button.classList.toggle('active', button.dataset.platform === state.platform);
+    });
+    document.querySelectorAll('.status-button').forEach(button => {
+      button.classList.toggle('active', button.dataset.status === state.status);
+    });
+  }
 
-    el.resultCount.textContent = `${visibleShortcuts} shortcut${visibleShortcuts === 1 ? "" : "s"} · ${visibleApps.length} software`;
-    el.emptyState.hidden = visibleApps.length !== 0;
-    el.appGrid.hidden = visibleApps.length === 0;
+  function logoSlugs(app) {
+    const full = String(app.name || '').toLowerCase().replace(/\+/g, 'plus').replace(/#/g, 'sharp').replace(/[^a-z0-9]/g, '');
+    const stripped = String(app.name || '')
+      .replace(/^(Adobe|Microsoft|Google|Autodesk|Oracle|Apple|JetBrains|IBM|Cisco|Blackmagic|Avid|Chaos|Trimble|Bentley|Siemens|Altair|Corel)\s+/i, '')
+      .toLowerCase().replace(/\+/g, 'plus').replace(/#/g, 'sharp').replace(/[^a-z0-9]/g, '');
+    return [...new Set([logoAliases[app.id], app.logoSlug, full, stripped].filter(Boolean))];
+  }
 
-    el.appGrid.innerHTML = visibleApps.map(app => `
-      <article class="app-card" style="--app-accent:${app.accent}">
+  function logoDomain(app) {
+    if (app.logoDomain) return String(app.logoDomain).replace(/^www\./, '');
+    try { return new URL(app.source).hostname.replace(/^www\./, ''); }
+    catch { return ''; }
+  }
+
+  function hydrateLogos() {
+    document.querySelectorAll('img[data-logo-app]').forEach(img => {
+      const app = apps.find(item => item.id === img.dataset.logoApp);
+      if (!app || img.dataset.hydrated === 'true') return;
+      img.dataset.hydrated = 'true';
+
+      const candidates = logoSlugs(app).map(slug => `https://cdn.simpleicons.org/${encodeURIComponent(slug)}?viewbox=auto&size=64`);
+      const domain = logoDomain(app);
+      if (domain && !domain.includes(' ')) {
+        candidates.push(`https://www.google.com/s2/favicons?domain_url=https://${encodeURIComponent(domain)}&sz=128`);
+      }
+
+      let index = 0;
+      const fallback = img.parentElement.querySelector('.logo-fallback');
+      const next = () => {
+        if (index >= candidates.length) {
+          img.hidden = true;
+          if (fallback) fallback.hidden = false;
+          return;
+        }
+        img.src = candidates[index++];
+      };
+      img.addEventListener('error', next);
+      next();
+    });
+  }
+
+  function cardHTML(app) {
+    const verified = (app.shortcuts || []).length > 0;
+    const shortcutsToRender = state.query || state.favoritesOnly || state.expandedApps.has(app.id)
+      ? app.visibleShortcuts
+      : app.visibleShortcuts.slice(0, 8);
+    const officialLabel = verified ? 'Official ↗' : 'Official site ↗';
+    const sourceLink = app.source
+      ? `<a class="source-link" href="${escapeHTML(app.source)}" target="_blank" rel="noreferrer noopener" aria-label="Open ${escapeHTML(app.name)} official reference">${officialLabel}</a>`
+      : '';
+
+    return `
+      <article class="app-card ${verified ? 'verified-card' : 'catalog-card'}" style="--app-accent:${escapeHTML(app.accent || '#64748b')}">
         <header class="app-card-header">
           <div class="app-identity">
-            <div class="app-icon" aria-hidden="true">${escapeHTML(app.icon)}</div>
+            <div class="app-logo-box" aria-hidden="true">
+              <img class="app-logo-img" data-logo-app="${escapeHTML(app.id)}" alt="" loading="lazy" decoding="async" />
+              <span class="logo-fallback" hidden>${escapeHTML(app.icon || app.name.slice(0, 2))}</span>
+            </div>
             <div>
               <div class="app-title-row">
                 <h3 class="app-title">${escapeHTML(app.name)}</h3>
-                ${app.popular ? '<span class="popular-badge">POPULAR</span>' : ""}
+                ${app.popular ? '<span class="popular-badge">POPULAR</span>' : ''}
+                <span class="status-badge ${verified ? 'status-verified' : 'status-catalog'}">${verified ? 'VERIFIED PACK' : 'CATALOG'}</span>
               </div>
-              <p class="app-description">${escapeHTML(app.description)}</p>
+              <p class="app-description">${escapeHTML(app.description || app.category)}</p>
+              <p class="app-taxonomy">${escapeHTML(app.category)}${app.professions?.length ? ` · ${escapeHTML(app.professions.slice(0, 2).join(' / '))}` : ''}</p>
             </div>
           </div>
-          <a class="source-link" href="${app.source}" target="_blank" rel="noreferrer noopener"
-             aria-label="Open official ${escapeHTML(app.name)} shortcut documentation">
-             Official ↗
-          </a>
+          ${sourceLink}
         </header>
-        <div class="shortcut-list">
-          ${app.visibleShortcuts.map(shortcut => {
-            const id = shortcutId(app.id, shortcut.originalIndex);
-            const favorite = state.favorites.has(id);
-            const combo = getCombo(shortcut);
-            return `
-              <div class="shortcut-row">
-                <div class="shortcut-action">${escapeHTML(shortcut.action)}</div>
-                <div class="key-combo" aria-label="${escapeHTML(combo)}">
-                  ${renderKeyCombo(combo)}
-                </div>
-                <div class="row-actions">
-                  <button class="tiny-button ${favorite ? "favorite" : ""}"
-                    type="button" data-favorite="${id}" title="${favorite ? "Remove from favorites" : "Add to favorites"}"
-                    aria-label="${favorite ? "Remove from favorites" : "Add to favorites"}">
-                    ${favorite ? "★" : "☆"}
-                  </button>
-                  <button class="tiny-button" type="button"
-                    data-copy="${escapeHTML(combo)}"
-                    data-action="${escapeHTML(shortcut.action)}"
-                    title="Copy shortcut" aria-label="Copy shortcut">
-                    ⧉
-                  </button>
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      </article>
-    `).join("");
+
+        ${verified ? `
+          <div class="shortcut-list">
+            ${shortcutsToRender.map(shortcut => {
+              const id = shortcutId(app.id, shortcut.originalIndex);
+              const favorite = state.favorites.has(id);
+              const combo = getCombo(shortcut);
+              return `
+                <div class="shortcut-row">
+                  <div class="shortcut-action">${escapeHTML(shortcut.action)}</div>
+                  <div class="key-combo" aria-label="${escapeHTML(combo)}">${renderKeyCombo(combo)}</div>
+                  <div class="row-actions">
+                    <button class="tiny-button ${favorite ? 'favorite' : ''}" type="button" data-favorite="${id}" title="${favorite ? 'Remove from favorites' : 'Add to favorites'}" aria-label="${favorite ? 'Remove from favorites' : 'Add to favorites'}">${favorite ? '★' : '☆'}</button>
+                    <button class="tiny-button" type="button" data-copy="${escapeHTML(combo)}" data-action="${escapeHTML(shortcut.action)}" title="Copy shortcut" aria-label="Copy shortcut">⧉</button>
+                  </div>
+                </div>`;
+            }).join('')}
+            ${(!state.query && !state.favoritesOnly && app.visibleShortcuts.length > 8) ? `
+              <button type="button" class="expand-app-button" data-expand-app="${escapeHTML(app.id)}">
+                ${state.expandedApps.has(app.id) ? 'Show fewer' : `Show all ${app.visibleShortcuts.length} shortcuts`}
+                <span aria-hidden="true">${state.expandedApps.has(app.id) ? '↑' : '↓'}</span>
+              </button>` : ''}
+          </div>` : `
+          <div class="catalog-state">
+            <div class="catalog-state-icon" aria-hidden="true">⌨</div>
+            <div>
+              <strong>Shortcut pack awaiting verification</strong>
+              <p>This software is indexed so people can find it, but ShortcutHub will not publish guessed keybindings.</p>
+              <button type="button" class="request-pack-button" data-request-pack="${escapeHTML(app.name)}">Copy contribution request</button>
+            </div>
+          </div>`}
+      </article>`;
+  }
+
+  function resultsTitle() {
+    if (state.favoritesOnly) return 'Your favorites';
+    if (state.query) return `Results for “${state.query}”`;
+    if (state.profession !== 'All') return state.profession;
+    if (state.category !== 'All') return state.category;
+    if (state.status === 'verified') return 'Verified shortcut packs';
+    if (state.status === 'catalog') return 'Catalog awaiting shortcut packs';
+    return 'All software';
+  }
+
+  function render() {
+    const matches = filteredApps();
+    const shown = matches.slice(0, state.displayLimit);
+    const visibleShortcuts = matches.reduce((sum, app) => sum + app.visibleShortcuts.length, 0);
+    const verifiedCount = matches.filter(app => (app.shortcuts || []).length > 0).length;
+
+    el.resultsTitle.textContent = resultsTitle();
+    el.resultCount.textContent = `${matches.length.toLocaleString()} software · ${visibleShortcuts.toLocaleString()} matching shortcuts · ${verifiedCount.toLocaleString()} verified packs`;
+    el.emptyState.hidden = matches.length !== 0;
+    el.appGrid.hidden = matches.length === 0;
+    el.appGrid.innerHTML = shown.map(cardHTML).join('');
+
+    const more = matches.length > shown.length;
+    el.loadMoreWrap.hidden = !more;
+    if (more) el.loadMoreButton.textContent = `Load ${Math.min(PAGE_SIZE, matches.length - shown.length)} more · ${matches.length - shown.length} remaining`;
 
     updateStats();
+    hydrateLogos();
   }
 
   function updateStats() {
-    const platformApps = apps.filter(appSupportsPlatform);
-    const totalShortcuts = platformApps.reduce((sum, app) =>
-      sum + app.shortcuts.filter(s => getCombo(s)).length, 0);
-    el.softwareStat.textContent = platformApps.length;
-    el.shortcutStat.textContent = totalShortcuts;
+    const totalShortcuts = apps.reduce((sum, app) => sum + (app.shortcuts || []).length, 0);
+    const verified = apps.filter(app => (app.shortcuts || []).length > 0).length;
+    el.softwareStat.textContent = apps.length.toLocaleString();
+    el.shortcutStat.textContent = totalShortcuts.toLocaleString();
+    el.verifiedStat.textContent = verified.toLocaleString();
+    el.categoryStat.textContent = new Set(apps.map(app => app.category)).size.toLocaleString();
   }
 
-  function syncPlatformButtons() {
-    document.querySelectorAll(".platform-button").forEach(button => {
-      button.classList.toggle("active", button.dataset.platform === state.platform);
-    });
+  function resetDisplayLimit() {
+    state.displayLimit = PAGE_SIZE;
   }
 
   function showToast(message) {
     el.toast.textContent = message;
-    el.toast.classList.add("show");
+    el.toast.classList.add('show');
     clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => el.toast.classList.remove("show"), 1600);
+    showToast.timer = setTimeout(() => el.toast.classList.remove('show'), 1800);
   }
 
-  async function copyShortcut(combo, action) {
-    const text = `${action} — ${combo}`;
+  async function copyText(text, success) {
     try {
       await navigator.clipboard.writeText(text);
-      showToast(`Copied: ${combo}`);
     } catch {
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement('textarea');
       textarea.value = text;
       document.body.appendChild(textarea);
       textarea.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       textarea.remove();
-      showToast(`Copied: ${combo}`);
     }
+    showToast(success);
   }
 
   function randomShortcut() {
     const pool = [];
     apps.filter(appSupportsPlatform).forEach(app => {
-      app.shortcuts.forEach((shortcut, index) => {
+      (app.shortcuts || []).forEach(shortcut => {
         const combo = getCombo(shortcut);
-        if (combo) pool.push({ app, shortcut, index, combo });
+        if (combo) pool.push({ app, shortcut, combo });
       });
     });
     if (!pool.length) return;
     const pick = pool[Math.floor(Math.random() * pool.length)];
-    state.query = pick.shortcut.action;
-    state.category = "All";
+    state.query = pick.app.name;
+    state.category = 'All';
+    state.profession = 'All';
+    state.status = 'verified';
     state.favoritesOnly = false;
-    el.search.value = pick.shortcut.action;
-    el.favoritesToggle.setAttribute("aria-pressed", "false");
-    renderCategories();
+    resetDisplayLimit();
+    el.search.value = pick.app.name;
+    el.favoritesToggle.setAttribute('aria-pressed', 'false');
+    renderFilters();
     render();
-    document.querySelector(".results-head")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelector('.results-head')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     showToast(`${pick.app.name}: ${pick.combo}`);
   }
 
   function resetFilters() {
-    state.category = "All";
-    state.query = "";
+    state.category = 'All';
+    state.profession = 'All';
+    state.status = 'all';
+    state.query = '';
     state.favoritesOnly = false;
-    el.search.value = "";
-    el.favoritesToggle.setAttribute("aria-pressed", "false");
-    renderCategories();
+    state.expandedApps.clear();
+    resetDisplayLimit();
+    el.search.value = '';
+    el.favoritesToggle.setAttribute('aria-pressed', 'false');
+    renderFilters();
     render();
   }
 
-  document.querySelectorAll(".platform-button").forEach(button => {
-    button.addEventListener("click", () => {
+  document.querySelectorAll('.platform-button').forEach(button => {
+    button.addEventListener('click', () => {
       state.platform = button.dataset.platform;
-      localStorage.setItem("shortcutHubPlatform", state.platform);
-      syncPlatformButtons();
+      localStorage.setItem('shortcutHubPlatform', state.platform);
+      resetDisplayLimit();
+      renderFilters();
       render();
     });
   });
 
-  el.search.addEventListener("input", event => {
+  document.querySelectorAll('.status-button').forEach(button => {
+    button.addEventListener('click', () => {
+      state.status = button.dataset.status;
+      resetDisplayLimit();
+      renderFilters();
+      render();
+    });
+  });
+
+  el.search.addEventListener('input', event => {
     state.query = event.target.value.trim();
+    resetDisplayLimit();
     render();
   });
 
-  el.categories.addEventListener("click", event => {
-    const button = event.target.closest("[data-category]");
-    if (!button) return;
-    state.category = button.dataset.category;
-    renderCategories();
+  el.categorySelect.addEventListener('change', event => {
+    state.category = event.target.value;
+    resetDisplayLimit();
     render();
   });
 
-  el.appGrid.addEventListener("click", event => {
-    const favoriteButton = event.target.closest("[data-favorite]");
-    if (favoriteButton) {
-      const id = favoriteButton.dataset.favorite;
-      state.favorites.has(id) ? state.favorites.delete(id) : state.favorites.add(id);
-      localStorage.setItem("shortcutHubFavorites", JSON.stringify([...state.favorites]));
+  el.professionSelect.addEventListener('change', event => {
+    state.profession = event.target.value;
+    resetDisplayLimit();
+    render();
+  });
+
+  el.appGrid.addEventListener('click', event => {
+    const expandButton = event.target.closest('[data-expand-app]');
+    if (expandButton) {
+      const id = expandButton.dataset.expandApp;
+      state.expandedApps.has(id) ? state.expandedApps.delete(id) : state.expandedApps.add(id);
       render();
       return;
     }
 
-    const copyButton = event.target.closest("[data-copy]");
-    if (copyButton) copyShortcut(copyButton.dataset.copy, copyButton.dataset.action);
+    const favoriteButton = event.target.closest('[data-favorite]');
+    if (favoriteButton) {
+      const id = favoriteButton.dataset.favorite;
+      state.favorites.has(id) ? state.favorites.delete(id) : state.favorites.add(id);
+      localStorage.setItem('shortcutHubFavorites', JSON.stringify([...state.favorites]));
+      render();
+      return;
+    }
+
+    const copyButton = event.target.closest('[data-copy]');
+    if (copyButton) {
+      copyText(`${copyButton.dataset.action} — ${copyButton.dataset.copy}`, `Copied: ${copyButton.dataset.copy}`);
+      return;
+    }
+
+    const requestButton = event.target.closest('[data-request-pack]');
+    if (requestButton) {
+      const appName = requestButton.dataset.requestPack;
+      copyText(
+        `Shortcut pack request: ${appName}\n\nPlease add verified default keyboard shortcuts for ${appName}. Include Windows/macOS differences when applicable and cite the official documentation or vendor manual.`,
+        `Contribution request copied for ${appName}`
+      );
+    }
   });
 
-  el.favoritesToggle.addEventListener("click", () => {
+  el.favoritesToggle.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
-    el.favoritesToggle.setAttribute("aria-pressed", String(state.favoritesOnly));
+    el.favoritesToggle.setAttribute('aria-pressed', String(state.favoritesOnly));
+    if (state.favoritesOnly) state.status = 'verified';
+    resetDisplayLimit();
+    renderFilters();
     render();
   });
 
-  el.themeToggle.addEventListener("click", () => {
-    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+  el.themeToggle.addEventListener('click', () => {
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
   });
 
-  el.randomButton.addEventListener("click", randomShortcut);
-  el.resetButton.addEventListener("click", resetFilters);
+  el.randomButton.addEventListener('click', randomShortcut);
+  el.resetButton.addEventListener('click', resetFilters);
+  el.loadMoreButton.addEventListener('click', () => {
+    state.displayLimit += PAGE_SIZE;
+    render();
+  });
 
-  document.addEventListener("keydown", event => {
-    const target = event.target;
-    const typing = target.matches("input, textarea, [contenteditable='true']");
-    if (event.key === "/" && !typing) {
+  document.addEventListener('keydown', event => {
+    const typing = event.target.matches('input, textarea, select, [contenteditable="true"]');
+    if (event.key === '/' && !typing) {
       event.preventDefault();
       el.search.focus();
     }
-    if (event.key === "Escape" && document.activeElement === el.search) {
-      el.search.value = "";
-      state.query = "";
+    if (event.key === 'Escape' && document.activeElement === el.search) {
+      el.search.value = '';
+      state.query = '';
       el.search.blur();
+      resetDisplayLimit();
       render();
     }
   });
 
-  renderCategories();
-  syncPlatformButtons();
+  renderFilters();
   render();
 })();

@@ -1,73 +1,105 @@
 # ShortcutHub ⌨️
 
-A responsive, searchable keyboard-shortcut library for popular software and operating systems.
+A massive, searchable keyboard-shortcut encyclopedia built for GitHub Pages.
 
-**Credit: Made by K.I.Rohan**
+**Made by K.I.Rohan**
 
-## Included
+## Current scale
 
-- Windows 11
-- macOS
-- Google Chrome
-- Microsoft Word
-- Microsoft Excel
-- Microsoft PowerPoint
-- Visual Studio Code
-- Adobe Photoshop
-- Canva
-- Figma
-- GitHub
-- Slack
+- **2,228 software titles** in the global catalog
+- **2,235 shortcut records**
+- **257 software shortcut packs**
+- **122 genres / specialist software categories**
+- **173 profession and workflow tags**
+- Windows / macOS aware shortcut rendering
+- Brand-logo loading with fallback handling
+
+The catalog intentionally separates **software discovery** from **verified shortcut packs**. A software title can be indexed before its shortcut pack is added, but ShortcutHub does not publish invented keyboard shortcuts just to increase the shortcut count.
+
+## Major coverage
+
+ShortcutHub includes software across architecture & BIM, CAD, 3D/VFX/rendering, game development, video editing, streaming, audio/music, design, UI/UX, photography, software development, DevOps/cloud, terminals, databases, data/BI, AI/ML, GIS, science, civil/structural engineering, electronics/PCB, CAM/manufacturing, research, education, office work, writing/publishing, productivity, communication, browsers, cybersecurity, networking, virtualization, utilities, ERP/accounting, CRM, marketing, no-code, automation/RPA, trading, medical/scientific imaging, legal tech, construction, industrial automation and many more specialist categories.
+
+## Highlighted software
+
+The verified collection includes popular tools such as:
+
+- AutoCAD, Autodesk Revit, SketchUp, D5 Render
+- Unreal Engine, Unity, Godot, Roblox Studio
+- CapCut, Premiere Pro, After Effects, DaVinci Resolve, Final Cut Pro
+- Photoshop, Illustrator, Figma, Canva, Blender, Maya
+- VS Code, Visual Studio, JetBrains IDEs, GitHub
+- Chrome, Firefox, Edge, Safari
+- Word, Excel, PowerPoint, Google Workspace
+- MATLAB, RStudio, SPSS, Stata, QGIS, ArcGIS Pro
+- Slack, Discord, Teams, Zoom and more
 
 ## Features
 
+- Instant search across software names, professions and shortcuts
 - Windows / macOS switch
-- Instant search
-- Category filters
+- **All Software / Verified Packs / Catalog Only** coverage filter
+- Genre dropdown built to handle 100+ specialist categories
+- Profession/workflow filtering
+- Progressive loading: only 24 cards at a time for performance
+- Real brand icon attempt through Simple Icons CDN
+- Official-site favicon fallback
+- Letter fallback if no usable brand image can be loaded
 - Favorites saved in `localStorage`
-- One-click copy
+- One-click shortcut copy
 - Random shortcut discovery
-- Dark / light mode
-- Responsive mobile layout
-- Official documentation links for every software card
-- No framework and no build step
+- Dark / light theme
+- Mobile responsive UI
+- `/` focuses search, `Esc` clears search
+- Official reference/site link on software cards
+- Contribution request generator for catalog-only entries
+
+## Logo policy
+
+ShortcutHub uses brand imagery for product identification. The UI first attempts a recognized Simple Icons brand SVG, then falls back to the icon/favicons associated with the software's official site, then to a text badge when no reliable logo can be loaded.
+
+Brand names, product names and logos remain the property of their respective owners. Inclusion does not imply endorsement or affiliation.
+
+## Accuracy policy
+
+A huge shortcut database becomes useless if it is full of guessed keybindings. ShortcutHub therefore uses two states:
+
+- **Verified Pack** — shortcut records are present in the database and the card provides a vendor/reference link.
+- **Catalog** — the software is indexed for discovery, but a shortcut pack has not yet been accepted into the database.
+
+When contributing a shortcut pack, use the current vendor documentation/manual wherever possible and record Windows/macOS differences explicitly.
 
 ## Run locally
-
-Open `index.html` in a browser, or run a simple local server:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then visit `http://localhost:8000`.
+Open `http://localhost:8000`.
 
 ## Publish with GitHub Pages
 
-1. Put these files at the root of your repository.
-2. Push them to GitHub.
-3. Open the repository **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select your branch (usually `main`) and `/ (root)`.
-6. Save.
+1. Put the repository files on your default branch.
+2. Open **Settings → Pages**.
+3. Under **Build and deployment**, select **Deploy from a branch**.
+4. Select `main` and `/ (root)`.
+5. Save.
 
-GitHub will provide the public Pages URL.
+No framework, package manager or build step is required.
 
-## Add another software
+## Add a verified shortcut pack
 
-Open `data.js` and add another object to `window.SHORTCUT_APPS`.
-
-A shortcut object can contain:
+Edit `data.js`. Each shortcut record can contain platform-specific values:
 
 ```js
 {
-  action: "Open a new tab",
-  windows: "Ctrl + T",
-  mac: "Command + T"
+  action: "Split at playhead",
+  windows: "Ctrl + B",
+  mac: "Command + B"
 }
 ```
 
-For sequential shortcuts, use an arrow:
+For sequential shortcuts:
 
 ```js
 {
@@ -77,27 +109,16 @@ For sequential shortcuts, use an arrow:
 }
 ```
 
-## Official references used
+See **CONTRIBUTING.md** for the data-quality checklist.
 
-- Microsoft Windows shortcuts: https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec
-- Apple Mac shortcuts: https://support.apple.com/en-us/102650
-- Google Chrome shortcuts: https://support.google.com/chrome/answer/157179
-- Microsoft Word shortcuts: https://support.microsoft.com/en-us/accessibility/word/keyboard-shortcuts-in-word
-- Microsoft Excel shortcuts: https://support.microsoft.com/en-us/accessibility/excel/keyboard-shortcuts-in-excel
-- Microsoft PowerPoint shortcuts: https://support.microsoft.com/en-us/accessibility/powerpoint/use-keyboard-shortcuts-to-create-powerpoint-presentations
-- VS Code default keybindings: https://code.visualstudio.com/docs/reference/default-keybindings
-- Adobe Photoshop shortcuts: https://helpx.adobe.com/photoshop/desktop/get-started/settings-and-preferences/view-keyboard-shortcuts.html
-- Canva shortcuts: https://www.canva.com/help/canva-keyboard-shortcuts/
-- Figma keyboard support: https://help.figma.com/hc/en-us/articles/360040328653-Use-Figma-products-with-a-keyboard
-- GitHub shortcuts: https://docs.github.com/en/get-started/accessibility/keyboard-shortcuts
-- Slack shortcuts: https://slack.com/help/articles/201374536-Slack-keyboard-shortcuts
+## Data files
 
-> Shortcut behavior can vary by version, keyboard layout, browser, operating system, and custom keybindings.
-
-## Suggested next additions
-
-Discord, Notion, Microsoft Teams, Premiere Pro, Illustrator, Blender, IntelliJ IDEA, Android Studio, Gmail, YouTube, Firefox, Edge, Terminal/PowerShell, and Linux.
+- `index.html` — page structure and UI
+- `styles.css` — responsive visual design
+- `app.js` — filtering, search, logo loading, pagination, favorites and interactions
+- `data.js` — software catalog + shortcut data
+- `CONTRIBUTING.md` — contribution and verification rules
 
 ---
 
-Made by **K.I.Rohan**
+Made by **K.I.Rohan** ♥

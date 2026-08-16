@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="A fast, searchable keyboard shortcut library for popular software and operating systems." />
-  <meta name="theme-color" content="#0b1020" />
-  <title>ShortcutHub — Keyboard Shortcuts</title>
+  <meta name="description" content="ShortcutHub: a massive, searchable keyboard shortcut catalog covering thousands of software titles and verified shortcut packs." />
+  <meta name="theme-color" content="#090d18" />
+  <title>ShortcutHub — The Massive Keyboard Shortcut Library</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -31,18 +31,18 @@
 
   <main id="top">
     <section class="hero">
-      <div class="eyebrow">THE SHORTCUT LIBRARY</div>
-      <h1>Stop clicking.<br><span>Start flying.</span></h1>
+      <div class="eyebrow">THE GLOBAL SHORTCUT ENCYCLOPEDIA</div>
+      <h1>Find the shortcut.<br><span>For almost anything.</span></h1>
       <p class="hero-copy">
-        Essential keyboard shortcuts for the software people use every day —
-        searchable, platform-aware, and one tap away.
+        A huge software catalog spanning creative work, architecture, game development, engineering,
+        coding, research, business, media and more — with verified shortcut packs added without publishing guessed defaults.
       </p>
 
       <div class="search-shell">
         <span class="search-icon" aria-hidden="true">⌕</span>
-        <label class="sr-only" for="searchInput">Search shortcuts</label>
+        <label class="sr-only" for="searchInput">Search software and shortcuts</label>
         <input id="searchInput" type="search" autocomplete="off"
-          placeholder="Search “duplicate layer”, “new tab”, “terminal”…" />
+          placeholder="Search CapCut, AutoCAD, Blender, VS Code, split clip, command palette…" />
         <kbd class="search-hint">/</kbd>
       </div>
 
@@ -51,35 +51,70 @@
           <span><strong id="softwareStat">0</strong> software</span>
           <span class="dot">•</span>
           <span><strong id="shortcutStat">0</strong> shortcuts</span>
+          <span class="dot">•</span>
+          <span><strong id="verifiedStat">0</strong> verified packs</span>
+          <span class="dot">•</span>
+          <span><strong id="categoryStat">0</strong> genres</span>
         </div>
-        <button class="text-button" id="randomButton" type="button">
-          Surprise me <span aria-hidden="true">↗</span>
-        </button>
+        <button class="text-button" id="randomButton" type="button">Surprise me <span aria-hidden="true">↗</span></button>
       </div>
     </section>
 
-    <section class="controls-section" aria-label="Shortcut filters">
-      <div class="platform-switch" role="group" aria-label="Platform">
-        <button class="platform-button active" data-platform="windows" type="button">⊞ Windows</button>
-        <button class="platform-button" data-platform="mac" type="button">⌘ macOS</button>
+    <section class="filter-panel" aria-label="Shortcut filters">
+      <div class="filter-row">
+        <div class="filter-block">
+          <span class="filter-label">Platform</span>
+          <div class="platform-switch" role="group" aria-label="Platform">
+            <button class="platform-button active" data-platform="windows" type="button">⊞ Windows</button>
+            <button class="platform-button" data-platform="mac" type="button">⌘ macOS</button>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <span class="filter-label">Coverage</span>
+          <div class="platform-switch status-switch" role="group" aria-label="Coverage status">
+            <button class="status-button active" data-status="all" type="button">All software</button>
+            <button class="status-button" data-status="verified" type="button">Verified packs</button>
+            <button class="status-button" data-status="catalog" type="button">Catalog only</button>
+          </div>
+        </div>
       </div>
-      <div id="categoryFilters" class="category-filters" aria-label="Categories"></div>
+
+      <div class="select-grid">
+        <label class="select-field">
+          <span class="filter-label">Genre</span>
+          <select id="categorySelect" aria-label="Filter by genre"></select>
+        </label>
+        <label class="select-field">
+          <span class="filter-label">Profession / workflow</span>
+          <select id="professionSelect" aria-label="Filter by profession"></select>
+        </label>
+      </div>
+    </section>
+
+    <section class="coverage-note" aria-label="Database quality note">
+      <span class="verified-dot" aria-hidden="true"></span>
+      <p><strong>Verified pack</strong> means the app currently has shortcuts in this database. Catalog-only software is indexed for discovery, but ShortcutHub does not invent unverified keybindings.</p>
     </section>
 
     <section class="results-head">
       <div>
         <p class="section-kicker">BROWSE</p>
-        <h2 id="resultsTitle">Popular shortcuts</h2>
+        <h2 id="resultsTitle">All software</h2>
       </div>
       <p id="resultCount" class="result-count" aria-live="polite"></p>
     </section>
 
     <section id="appGrid" class="app-grid" aria-live="polite"></section>
 
+    <div class="load-more-wrap" id="loadMoreWrap" hidden>
+      <button id="loadMoreButton" class="primary-button load-more-button" type="button">Load more software</button>
+    </div>
+
     <section id="emptyState" class="empty-state" hidden>
       <div class="empty-icon">⌨</div>
-      <h2>No shortcuts found</h2>
-      <p>Try a broader search, another category, or clear your favorites filter.</p>
+      <h2>No matching software or shortcuts</h2>
+      <p>Try another search, genre, profession, platform, or coverage filter.</p>
       <button id="resetButton" class="primary-button" type="button">Reset filters</button>
     </section>
   </main>
@@ -89,11 +124,11 @@
       <span class="mini-mark">⌘</span>
       <div>
         <strong>ShortcutHub</strong>
-        <p>A compact reference for faster computer work.</p>
+        <p>A growing shortcut encyclopedia for faster digital work.</p>
       </div>
     </div>
     <div class="footer-right">
-      <p>Shortcuts can vary by app version, layout, and custom keybindings.</p>
+      <p>Shortcuts can vary by version, keyboard layout, operating system and custom keybindings. Brand names and logos belong to their respective owners and are used for identification.</p>
       <p class="credit">Made by <strong>K.I.Rohan</strong> <span aria-hidden="true">♥</span></p>
     </div>
   </footer>
