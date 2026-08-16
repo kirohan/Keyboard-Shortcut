@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A fast, searchable keyboard shortcut library for popular software and operating systems." />
+  <meta name="theme-color" content="#0b1020" />
+  <title>ShortcutHub — Keyboard Shortcuts</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="ShortcutHub home">
+      <span class="brand-mark"><kbd>⌘</kbd></span>
+      <span>Shortcut<span>Hub</span></span>
+    </a>
+
+    <nav class="header-actions" aria-label="Site controls">
+      <button class="icon-button" id="favoritesToggle" type="button" aria-pressed="false" title="Show favorites">
+        <span aria-hidden="true">★</span>
+        <span class="desktop-label">Favorites</span>
+      </button>
+      <button class="icon-button" id="themeToggle" type="button" title="Toggle theme" aria-label="Toggle light and dark theme">
+        <span id="themeIcon" aria-hidden="true">☀</span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="eyebrow">THE SHORTCUT LIBRARY</div>
+      <h1>Stop clicking.<br><span>Start flying.</span></h1>
+      <p class="hero-copy">
+        Essential keyboard shortcuts for the software people use every day —
+        searchable, platform-aware, and one tap away.
+      </p>
+
+      <div class="search-shell">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <label class="sr-only" for="searchInput">Search shortcuts</label>
+        <input id="searchInput" type="search" autocomplete="off"
+          placeholder="Search “duplicate layer”, “new tab”, “terminal”…" />
+        <kbd class="search-hint">/</kbd>
+      </div>
+
+      <div class="hero-meta">
+        <div class="stats" aria-label="Library statistics">
+          <span><strong id="softwareStat">0</strong> software</span>
+          <span class="dot">•</span>
+          <span><strong id="shortcutStat">0</strong> shortcuts</span>
+        </div>
+        <button class="text-button" id="randomButton" type="button">
+          Surprise me <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="controls-section" aria-label="Shortcut filters">
+      <div class="platform-switch" role="group" aria-label="Platform">
+        <button class="platform-button active" data-platform="windows" type="button">⊞ Windows</button>
+        <button class="platform-button" data-platform="mac" type="button">⌘ macOS</button>
+      </div>
+      <div id="categoryFilters" class="category-filters" aria-label="Categories"></div>
+    </section>
+
+    <section class="results-head">
+      <div>
+        <p class="section-kicker">BROWSE</p>
+        <h2 id="resultsTitle">Popular shortcuts</h2>
+      </div>
+      <p id="resultCount" class="result-count" aria-live="polite"></p>
+    </section>
+
+    <section id="appGrid" class="app-grid" aria-live="polite"></section>
+
+    <section id="emptyState" class="empty-state" hidden>
+      <div class="empty-icon">⌨</div>
+      <h2>No shortcuts found</h2>
+      <p>Try a broader search, another category, or clear your favorites filter.</p>
+      <button id="resetButton" class="primary-button" type="button">Reset filters</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="mini-mark">⌘</span>
+      <div>
+        <strong>ShortcutHub</strong>
+        <p>A compact reference for faster computer work.</p>
+      </div>
+    </div>
+    <div class="footer-right">
+      <p>Shortcuts can vary by app version, layout, and custom keybindings.</p>
+      <p class="credit">Made by <strong>K.I.Rohan</strong> <span aria-hidden="true">♥</span></p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
