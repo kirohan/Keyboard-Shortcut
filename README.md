@@ -1,36 +1,52 @@
-# ShortcutHub V2 ⌨️
+# ShortcutHub V2.1 — Stable GitHub Pages Build
 
 **Made by K.I.Rohan**
 
-A redesign of ShortcutHub for a massive software catalog.
+This release fixes the broken/partially styled preview problem from V2.
 
-## V2 ideas
+## What was fixed
 
-- Essential shortcuts are shown first on each card.
-- **View all** opens a dedicated searchable software shortcut panel.
-- Vendor **Official complete reference** is one click away for huge/customizable keymaps.
-- Surprise Me is a primary highlighted interaction, not a tiny text link.
-- Search software names **and shortcut actions**.
-- Windows/macOS switching.
-- Genre + profession filters.
-- Progressive loading for thousands of software titles.
-- Updated logo fallback system.
-- Deep links such as `#app=photoshop`.
-- `Ctrl/Cmd + K` or `/` focuses global search.
+The deployable root `index.html` is now **self-contained**:
+- CSS is embedded
+- the software/shortcut database is embedded
+- JavaScript is embedded
+- startup no longer crashes if browser storage is blocked
+- the site therefore works when `index.html` is opened directly and is very reliable on GitHub Pages
 
-## Current database
+The editable modular files are still available under `source/`.
 
-- 2,228 indexed software titles
-- 2,570 shortcut records
-- 257 software shortcut packs
-- 122 genres
+## Recommended GitHub Pages deployment
 
-The most popular packs were expanded for V2, including Windows, macOS, Chrome, Word, Excel, PowerPoint, VS Code, Photoshop, Figma, Canva, GitHub, AutoCAD, Revit, SketchUp, Blender, Premiere Pro, After Effects and CapCut.
+Upload the **entire contents of this folder** to the repository root, then enable:
 
-## Completeness policy
+`Settings → Pages → Deploy from a branch → main → /(root)`
 
-“View all” means **all shortcuts currently verified in ShortcutHub for that software**. Some modern applications have hundreds or thousands of commands and allow users to change their bindings. For those apps, the product card/detail panel includes the official vendor shortcut reference so users can reach the live complete list.
+The public site uses the root `index.html`.
 
-## GitHub Pages
+## Editing
 
-Upload `index.html`, `styles.css`, `app.js`, and `data.js` to your repository root, then enable **Settings → Pages → Deploy from a branch**.
+Edit:
+- `source/index.html`
+- `source/styles.css`
+- `source/data.js`
+- `source/app.js`
+
+Then run:
+
+```bash
+python build.py
+```
+
+This regenerates the deployment-safe root `index.html`.
+
+## Why V2 looked broken
+
+A standalone HTML preview can fail to load neighboring `styles.css`, `data.js`, and `app.js` files. In restricted preview environments, `localStorage` may also be unavailable. V2.1 removes both failure modes.
+
+## Shortcut UX
+
+Cards show essential shortcuts first. `View all … shortcuts` opens the full verified pack for that software. The official reference link remains available for vendor-complete/customizable keymaps.
+
+---
+
+Made by **K.I.Rohan**
