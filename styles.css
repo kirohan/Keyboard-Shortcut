@@ -643,8 +643,8 @@ footer {
   box-shadow: 0 5px 18px rgba(0,0,0,.13);
 }
 .app-logo-img {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   display: block;
 }
@@ -729,6 +729,6 @@ footer {
   .stats .dot { display: none; }
   .stats { gap: 6px 12px; }
   .app-logo-box { width: 42px; height: 42px; }
-  .app-logo-img { width: 27px; height: 27px; }
+  .app-logo-img { width: 31px; height: 31px; }
   .catalog-state { padding: 18px 17px; }
 }

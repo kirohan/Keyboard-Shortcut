@@ -122,3 +122,8 @@ See **CONTRIBUTING.md** for the data-quality checklist.
 ---
 
 Made by **K.I.Rohan** ♥
+
+## Product logo system
+
+ShortcutHub now prioritizes recognizable **full-color, product-specific logos** for suites where monochrome marks are easy to confuse. Microsoft 365 apps such as Word, Excel and PowerPoint prefer product-specific Microsoft web icons, while Adobe Creative Cloud apps prefer full-color product SVGs. The site then falls back to Simple Icons, an official-site favicon, and finally a text badge. Logos are loaded lazily so the large catalog stays fast.
+

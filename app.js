@@ -45,12 +45,130 @@
   const logoAliases = {
     windows: 'windows11', macos: 'macos', chrome: 'googlechrome', vscode: 'visualstudiocode',
     photoshop: 'adobephotoshop', illustrator: 'adobeillustrator', indesign: 'adobeindesign',
+    premiere: 'adobepremierepro', aftereffects: 'adobeaftereffects',
     'premiere-pro': 'adobepremierepro', 'after-effects': 'adobeaftereffects',
     'davinci-resolve': 'davinciresolve', capcut: 'capcut', autocad: 'autocad',
     'autodesk-revit': 'autodeskrevit', sketchup: 'sketchup', blender: 'blender',
     maya: 'autodeskmaya', unreal: 'unrealengine', unity: 'unity', godot: 'godotengine',
     figma: 'figma', canva: 'canva', github: 'github', slack: 'slack', discord: 'discord',
-    notion: 'notion', obs: 'obsstudio', 'power-bi': 'powerbi', tableau: 'tableau'
+    notion: 'notion', obs: 'obsstudio', 'power-bi': 'powerbi', tableau: 'tableau',
+    word: 'microsoftword', excel: 'microsoftexcel', powerpoint: 'microsoftpowerpoint',
+    onenote: 'microsoftonenote', outlook: 'microsoftoutlook', teams: 'microsoftteams'
+  };
+
+  // Product-specific full-colour marks are intentionally preferred for suites whose
+  // monochrome brand glyphs are easy to confuse (notably Microsoft 365 and Adobe CC).
+  // Multiple candidates make the site resilient if one public icon endpoint changes.
+  const logoUrlOverrides = {
+    // Microsoft 365 — product-specific Microsoft domains first so icon refreshes can flow through.
+    word: [
+      'https://www.google.com/s2/favicons?domain_url=https://word.cloud.microsoft&sz=256',
+      'https://api.iconify.design/logos/microsoft-word.svg'
+    ],
+    excel: [
+      'https://www.google.com/s2/favicons?domain_url=https://excel.cloud.microsoft&sz=256',
+      'https://api.iconify.design/logos/microsoft-excel.svg'
+    ],
+    powerpoint: [
+      'https://www.google.com/s2/favicons?domain_url=https://powerpoint.cloud.microsoft&sz=256',
+      'https://api.iconify.design/logos/microsoft-powerpoint.svg'
+    ],
+    onenote: [
+      'https://www.google.com/s2/favicons?domain_url=https://www.onenote.com&sz=256',
+      'https://api.iconify.design/logos/microsoft-onenote.svg'
+    ],
+    outlook: [
+      'https://www.google.com/s2/favicons?domain_url=https://outlook.cloud.microsoft&sz=256',
+      'https://api.iconify.design/logos/microsoft-outlook.svg'
+    ],
+    teams: [
+      'https://www.google.com/s2/favicons?domain_url=https://teams.microsoft.com&sz=256',
+      'https://api.iconify.design/logos/microsoft-teams.svg'
+    ],
+    'microsoft-loop': [
+      'https://www.google.com/s2/favicons?domain_url=https://loop.cloud.microsoft&sz=256',
+      'https://api.iconify.design/logos/microsoft-loop.svg'
+    ],
+    'microsoft-onedrive': [
+      'https://api.iconify.design/logos/microsoft-onedrive.svg',
+      'https://www.google.com/s2/favicons?domain_url=https://onedrive.live.com&sz=256'
+    ],
+    'microsoft-copilot': [
+      'https://www.google.com/s2/favicons?domain_url=https://copilot.microsoft.com&sz=256',
+      'https://api.iconify.design/logos/microsoft-copilot.svg'
+    ],
+    'power-bi': [
+      'https://api.iconify.design/logos/microsoft-power-bi.svg',
+      'https://www.google.com/s2/favicons?domain_url=https://app.powerbi.com&sz=256'
+    ],
+    'microsoft-publisher': [
+      'https://api.iconify.design/logos/microsoft-publisher.svg',
+      'https://api.iconify.design/simple-icons/microsoftpublisher.svg?color=%230771C5'
+    ],
+    'microsoft-visio': [
+      'https://api.iconify.design/logos/microsoft-visio.svg',
+      'https://api.iconify.design/simple-icons/microsoftvisio.svg?color=%233956A3'
+    ],
+    'microsoft-project': [
+      'https://www.google.com/s2/favicons?domain_url=https://project.microsoft.com&sz=256',
+      'https://api.iconify.design/logos/microsoft-project.svg'
+    ],
+
+    // Adobe Creative Cloud — full-colour, product-specific marks before monochrome fallbacks.
+    photoshop: [
+      'https://api.iconify.design/logos/adobe-photoshop.svg',
+      'https://api.iconify.design/skill-icons/photoshop.svg'
+    ],
+    illustrator: [
+      'https://api.iconify.design/logos/adobe-illustrator.svg',
+      'https://api.iconify.design/skill-icons/illustrator.svg'
+    ],
+    indesign: [
+      'https://api.iconify.design/logos/adobe-indesign.svg',
+      'https://api.iconify.design/skill-icons/indesign.svg'
+    ],
+    premiere: [
+      'https://api.iconify.design/logos/adobe-premiere.svg',
+      'https://api.iconify.design/skill-icons/premiere.svg'
+    ],
+    aftereffects: [
+      'https://api.iconify.design/logos/adobe-after-effects.svg',
+      'https://api.iconify.design/skill-icons/aftereffects.svg'
+    ],
+    'adobe-audition': [
+      'https://api.iconify.design/logos/adobe-audition.svg',
+      'https://api.iconify.design/skill-icons/audition.svg'
+    ],
+    'adobe-lightroom': [
+      'https://api.iconify.design/logos/adobe-lightroom.svg',
+      'https://api.iconify.design/skill-icons/lightroom.svg'
+    ],
+    'lightroom-classic': [
+      'https://api.iconify.design/logos/adobe-lightroom.svg',
+      'https://api.iconify.design/skill-icons/lightroom.svg'
+    ],
+    'adobe-acrobat-pro': [
+      'https://api.iconify.design/logos/adobe-acrobat.svg',
+      'https://www.google.com/s2/favicons?domain_url=https://acrobat.adobe.com&sz=256'
+    ],
+    'adobe-acrobat-reader': [
+      'https://api.iconify.design/logos/adobe-acrobat.svg',
+      'https://www.google.com/s2/favicons?domain_url=https://acrobat.adobe.com&sz=256'
+    ],
+    'adobe-express': [
+      'https://www.google.com/s2/favicons?domain_url=https://www.adobe.com/express&sz=256',
+      'https://api.iconify.design/simple-icons/adobeexpress.svg?color=%23FF61F6'
+    ],
+    'adobe-animate': [
+      'https://api.iconify.design/logos/adobe-animate.svg',
+      'https://api.iconify.design/simple-icons/adobeanimate.svg?color=%239999FF'
+    ],
+    'adobe-media-encoder': [
+      'https://api.iconify.design/simple-icons/adobemediaencoder.svg?color=%239999FF'
+    ],
+    'adobe-bridge': [
+      'https://api.iconify.design/simple-icons/adobebridge.svg?color=%23FF9A00'
+    ]
   };
 
   function escapeHTML(value) {
@@ -189,7 +307,10 @@
       if (!app || img.dataset.hydrated === 'true') return;
       img.dataset.hydrated = 'true';
 
-      const candidates = logoSlugs(app).map(slug => `https://cdn.simpleicons.org/${encodeURIComponent(slug)}?viewbox=auto&size=64`);
+      const candidates = [
+        ...(logoUrlOverrides[app.id] || []),
+        ...logoSlugs(app).map(slug => `https://cdn.simpleicons.org/${encodeURIComponent(slug)}?viewbox=auto&size=64`)
+      ];
       const domain = logoDomain(app);
       if (domain && !domain.includes(' ')) {
         candidates.push(`https://www.google.com/s2/favicons?domain_url=https://${encodeURIComponent(domain)}&sz=128`);
